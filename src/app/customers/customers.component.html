@@ -1,1 +1,10 @@
 <p>customers works!</p>
+
+<div style="display: flex; gap: 10px">
+  <div *ngFor="let index of arr">
+    {{ index }}
+  </div>
+</div>
+
+<button (click)="onClick()">Seq Start</button>
+<button (click)="addSeqNum()">add Seq queue</button>
