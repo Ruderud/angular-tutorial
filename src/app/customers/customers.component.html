@@ -8,3 +8,17 @@
 
 <button (click)="onClick()">Seq Start</button>
 <button (click)="addSeqNum()">add Seq queue</button>
+
+<br />
+
+<button (click)="fetchToDos()">Fetch Todos</button>
+
+<ul *ngFor="let todo of todos">
+  <li>
+    <div style="display: flex; gap: 10px">
+      <p>{{ todo.title }}</p>
+      <p *ngIf="todo.completed">✅</p>
+      <p *ngIf="!todo.completed">❌</p>
+    </div>
+  </li>
+</ul>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { Observable, Observer, from, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { Observable, Observer, catchError, from, of } from 'rxjs';
 
 // // 구독자가 구독을 실행하면 새로운 Observable 인스턴스를 생성하고
 // // 클라이언트의 접속 위치를 추적하기 시작합니다.
@@ -88,6 +89,8 @@ const genSeq = (arr: number[]): Observable<number> => {
         observer.next(arr[idx]);
         if (idx === arr.length - 1) {
           observer.complete();
+        } else if (idx >= 7) {
+          observer.error('Error encountered by idx >= 7');
         } else {
           doInSequence(arr, ++idx);
         }
@@ -105,13 +108,31 @@ const genSeq = (arr: number[]): Observable<number> => {
   });
 };
 
+type Todo = {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+};
+
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.css'],
 })
-export class CustomersComponent {
+export class CustomersComponent implements OnInit {
   arr = [1, 2, 3];
+  todos: Todo[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  getTodos() {
+    return this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos');
+  }
+
+  ngOnInit(): void {
+    this.getTodos().subscribe((todos) => (this.todos = todos.slice(0, 10)));
+  }
 
   onClick() {
     // 위에서 정의한 데이터 스트림을 발생하는 옵저버블을 생성합니다.
@@ -128,5 +149,11 @@ export class CustomersComponent {
 
   addSeqNum() {
     this.arr.push(this.arr.length + 1);
+  }
+
+  async fetchToDos() {
+    const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+    const data = await res.json();
+    console.log(data.slice(0, 10));
   }
 }
